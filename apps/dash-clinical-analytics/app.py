@@ -1,6 +1,6 @@
 import dash
-import dash_core_components as dcc
-import dash_html_components as html
+from dash import dcc
+from dash import html
 from dash.dependencies import Input, Output, ClientsideFunction
 
 import numpy as np
@@ -55,7 +55,7 @@ day_list = [
     "Sunday",
 ]
 
-check_in_duration = df["Check-In Time"].describe()
+check_in_duration = df["Check-In Time"].describe(datetime_is_numeric=True)
 
 # Register all departments for callbacks
 all_departments = df["Department"].unique().tolist()
@@ -537,12 +537,7 @@ def create_table_figure(
 app.layout = html.Div(
     id="app-container",
     children=[
-        # Banner
-        html.Div(
-            id="banner",
-            className="banner",
-            children=[html.Img(src=app.get_asset_url("plotly_logo.png"))],
-        ),
+
         # Left column
         html.Div(
             id="left-column",

@@ -1,7 +1,18 @@
 # ========== (c) JP Hwang 2020-04-02  ==========
-
 import logging
 
+import pandas as pd
+import numpy as np
+import plotly.express as px
+import dash
+import dash_cytoscape as cyto
+from dash import html
+import dash_bootstrap_components as dbc
+from dash import dcc
+from dash.dependencies import Input, Output
+from sklearn.manifold import TSNE
+import umap
+import json
 # ===== START LOGGER =====
 logger = logging.getLogger(__name__)
 root_logger = logging.getLogger()
@@ -11,18 +22,7 @@ formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(messag
 sh.setFormatter(formatter)
 root_logger.addHandler(sh)
 
-import pandas as pd
-import numpy as np
-import plotly.express as px
-import dash
-import dash_cytoscape as cyto
-import dash_html_components as html
-import dash_bootstrap_components as dbc
-import dash_core_components as dcc
-from dash.dependencies import Input, Output
-from sklearn.manifold import TSNE
-import umap
-import json
+
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
