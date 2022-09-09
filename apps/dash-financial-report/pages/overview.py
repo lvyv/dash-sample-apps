@@ -1,5 +1,6 @@
-import dash_core_components as dcc
-import dash_html_components as html
+from dash import dcc
+from dash import html
+from utils import initial_figure_radar
 import plotly.graph_objs as go
 
 from utils import Header, make_dash_table
@@ -29,19 +30,17 @@ def create_layout(app):
                         [
                             html.Div(
                                 [
-                                    html.H5("Product Summary"),
+                                    html.H5("LY126试验总结"),
                                     html.Br([]),
                                     html.P(
                                         "\
-                                    As the industry’s first index fund for individual investors, \
-                                    the Calibre Index Fund is a low-cost way to gain diversified exposure \
-                                    to the U.S. equity market. The fund offers exposure to 500 of the \
-                                    largest U.S. companies, which span many different industries and \
-                                    account for about three-fourths of the U.S. stock market’s value. \
-                                    The key risk for the fund is the volatility that comes with its full \
-                                    exposure to the stock market. Because the Calibre Index Fund is broadly \
-                                    diversified within the large-capitalization market, it may be \
-                                    considered a core equity holding in a portfolio.",
+                                    报告指出，作战试验鉴定局请美国国家学院（NASEM）组织相关的专家委员会，\
+                                    评审当前国防部的试验训练靶场是否满足实弹射击和作战试验鉴定的需求，\
+                                    评估2025-2035年期间国防部靶场及相关基础设施是否能够满足作战试验鉴定局的任务需求。\
+                                    研究包含两部分，分别评估国防部试验训练靶场的物理和作战适用性。\
+                                    试验鉴定领域的主旋律是组织管理制度的调整和改革。《报告》的局长卷首语中，\
+                                    采用了大量的疑问句形式，表明了作战试验鉴定局对试验鉴定领域的当前和未来发展，\
+                                    有着强烈的危机感和紧迫感。",
                                         style={"color": "#ffffff"},
                                         className="row",
                                     ),
@@ -57,7 +56,7 @@ def create_layout(app):
                             html.Div(
                                 [
                                     html.H6(
-                                        ["Fund Facts"], className="subtitle padded"
+                                        ["KPI指标"], className="subtitle padded"
                                     ),
                                     html.Table(make_dash_table(df_fund_facts)),
                                 ],
@@ -66,101 +65,21 @@ def create_layout(app):
                             html.Div(
                                 [
                                     html.H6(
-                                        "Average annual performance",
+                                        "参试方指标雷达图",
                                         className="subtitle padded",
                                     ),
                                     dcc.Graph(
-                                        id="graph-1",
-                                        figure={
-                                            "data": [
-                                                go.Bar(
-                                                    x=[
-                                                        "1 Year",
-                                                        "3 Year",
-                                                        "5 Year",
-                                                        "10 Year",
-                                                        "41 Year",
-                                                    ],
-                                                    y=[
-                                                        "21.67",
-                                                        "11.26",
-                                                        "15.62",
-                                                        "8.37",
-                                                        "11.11",
-                                                    ],
-                                                    marker={
-                                                        "color": "#97151c",
-                                                        "line": {
-                                                            "color": "rgb(255, 255, 255)",
-                                                            "width": 2,
-                                                        },
-                                                    },
-                                                    name="Calibre Index Fund",
-                                                ),
-                                                go.Bar(
-                                                    x=[
-                                                        "1 Year",
-                                                        "3 Year",
-                                                        "5 Year",
-                                                        "10 Year",
-                                                        "41 Year",
-                                                    ],
-                                                    y=[
-                                                        "21.83",
-                                                        "11.41",
-                                                        "15.79",
-                                                        "8.50",
-                                                    ],
-                                                    marker={
-                                                        "color": "#dddddd",
-                                                        "line": {
-                                                            "color": "rgb(255, 255, 255)",
-                                                            "width": 2,
-                                                        },
-                                                    },
-                                                    name="S&P 500 Index",
-                                                ),
+                                        id="radar-graph",
+                                        figure=initial_figure_radar(),
+                                        config={
+                                            "modeBarButtonsToRemove": [
+                                                "toggleSpikelines",
+                                                "pan2d",
+                                                "autoScale2d",
+                                                "resetScale2d",
                                             ],
-                                            "layout": go.Layout(
-                                                autosize=False,
-                                                bargap=0.35,
-                                                font={"family": "Raleway", "size": 10},
-                                                height=200,
-                                                hovermode="closest",
-                                                legend={
-                                                    "x": -0.0228945952895,
-                                                    "y": -0.189563896463,
-                                                    "orientation": "h",
-                                                    "yanchor": "top",
-                                                },
-                                                margin={
-                                                    "r": 0,
-                                                    "t": 20,
-                                                    "b": 10,
-                                                    "l": 10,
-                                                },
-                                                showlegend=True,
-                                                title="",
-                                                width=330,
-                                                xaxis={
-                                                    "autorange": True,
-                                                    "range": [-0.5, 4.5],
-                                                    "showline": True,
-                                                    "title": "",
-                                                    "type": "category",
-                                                },
-                                                yaxis={
-                                                    "autorange": True,
-                                                    "range": [0, 22.9789473684],
-                                                    "showgrid": True,
-                                                    "showline": True,
-                                                    "title": "",
-                                                    "type": "linear",
-                                                    "zeroline": False,
-                                                },
-                                            ),
+                                            "displaylogo": False
                                         },
-                                        config={"displayModeBar": False},
                                     ),
                                 ],
                                 className="six columns",
@@ -175,7 +94,7 @@ def create_layout(app):
                             html.Div(
                                 [
                                     html.H6(
-                                        "Hypothetical growth of $10,000",
+                                        "试验执行指标历史趋势图",
                                         className="subtitle padded",
                                     ),
                                     dcc.Graph(
@@ -211,7 +130,7 @@ def create_layout(app):
                                                     ],
                                                     line={"color": "#97151c"},
                                                     mode="lines",
-                                                    name="Calibre Index Fund Inv",
+                                                    name="试验效能指标",
                                                 )
                                             ],
                                             "layout": go.Layout(
@@ -268,7 +187,7 @@ def create_layout(app):
                             html.Div(
                                 [
                                     html.H6(
-                                        "Price & Performance (%)",
+                                        "本次试验统计量 (Stat)",
                                         className="subtitle padded",
                                     ),
                                     html.Table(make_dash_table(df_price_perf)),
@@ -278,7 +197,7 @@ def create_layout(app):
                             html.Div(
                                 [
                                     html.H6(
-                                        "Risk Potential", className="subtitle padded"
+                                        "潜在风险", className="subtitle padded"
                                     ),
                                     html.Img(
                                         src=app.get_asset_url("risk_reward.png"),

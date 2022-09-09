@@ -1,5 +1,5 @@
-import dash_core_components as dcc
-import dash_html_components as html
+from dash import dcc
+from dash import html
 import plotly.graph_objs as go
 
 from utils import Header, make_dash_table
@@ -25,7 +25,7 @@ def create_layout(app):
                     html.Div(
                         [
                             html.Div(
-                                [html.H6(["Portfolio"], className="subtitle padded")],
+                                [html.H6(["测控结论"], className="subtitle padded")],
                                 className="twelve columns",
                             )
                         ],
@@ -277,7 +277,7 @@ def create_layout(app):
                             html.Div(
                                 [
                                     html.H6(
-                                        ["Equity characteristics as of 01/31/2018"],
+                                        ["试验目标事件"],
                                         className="subtitle padded",
                                     ),
                                     html.Table(
@@ -296,7 +296,7 @@ def create_layout(app):
                             html.Div(
                                 [
                                     html.H6(
-                                        ["Equity sector diversification"],
+                                        ["试验过程事件"],
                                         className="subtitle padded",
                                     ),
                                     html.Table(

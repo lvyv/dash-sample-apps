@@ -1,4 +1,4 @@
-import dash_html_components as html
+from dash import html
 from utils import Header
 
 
@@ -14,7 +14,7 @@ def create_layout(app):
                         [
                             html.Div(
                                 [
-                                    html.H6("News", className="subtitle padded"),
+                                    html.H6("试验结论", className="subtitle padded"),
                                     html.Br([]),
                                     html.Div(
                                         [
@@ -32,7 +32,7 @@ def create_layout(app):
                             ),
                             html.Div(
                                 [
-                                    html.H6("Reviews", className="subtitle padded"),
+                                    html.H6("改进建议", className="subtitle padded"),
                                     html.Br([]),
                                     html.Div(
                                         [

@@ -1,4 +1,4 @@
-import dash_html_components as html
+from dash import html
 from utils import Header, make_dash_table
 import pandas as pd
 import pathlib
@@ -25,7 +25,7 @@ def create_layout(app):
                             html.Div(
                                 [
                                     html.H6(
-                                        ["Distributions"], className="subtitle padded"
+                                        ["综合通信结论"], className="subtitle padded"
                                     ),
                                     html.P(
                                         [
@@ -46,7 +46,7 @@ def create_layout(app):
                                 [
                                     html.Br([]),
                                     html.H6(
-                                        ["Dividend and capital gains distributions"],
+                                        ["试验目标事件"],
                                         className="subtitle tiny-header padded",
                                     ),
                                     html.Div(
@@ -70,7 +70,7 @@ def create_layout(app):
                             html.Div(
                                 [
                                     html.H6(
-                                        ["Realized/unrealized gains as of 01/31/2018"],
+                                        ["试验过程事件"],
                                         className="subtitle tiny-header padded",
                                     )
                                 ],

@@ -1,5 +1,5 @@
-import dash_core_components as dcc
-import dash_html_components as html
+from dash import dcc
+from dash import html
 import plotly.graph_objs as go
 from utils import Header, make_dash_table
 import pandas as pd
@@ -31,7 +31,7 @@ def create_layout(app):
                             html.Div(
                                 [
                                     html.H6(
-                                        ["Current Prices"], className="subtitle padded"
+                                        ["弹道参数"], className="subtitle padded"
                                     ),
                                     html.Table(make_dash_table(df_current_prices)),
                                 ],
@@ -40,7 +40,7 @@ def create_layout(app):
                             html.Div(
                                 [
                                     html.H6(
-                                        ["Historical Prices"],
+                                        ["历史飞行轨迹记录"],
                                         className="subtitle padded",
                                     ),
                                     html.Table(make_dash_table(df_hist_prices)),
@@ -55,7 +55,7 @@ def create_layout(app):
                         [
                             html.Div(
                                 [
-                                    html.H6("Performance", className="subtitle padded"),
+                                    html.H6("弹道拟合度", className="subtitle padded"),
                                     dcc.Graph(
                                         id="graph-4",
                                         figure={
@@ -65,7 +65,7 @@ def create_layout(app):
                                                     y=df_graph["Calibre Index Fund"],
                                                     line={"color": "#97151c"},
                                                     mode="lines",
-                                                    name="Calibre Index Fund",
+                                                    name="实际弹道",
                                                 ),
                                                 go.Scatter(
                                                     x=df_graph["Date"],
@@ -74,7 +74,7 @@ def create_layout(app):
                                                     ],
                                                     line={"color": "#b5b5b5"},
                                                     mode="lines",
-                                                    name="MSCI EAFE Index Fund (ETF)",
+                                                    name="预测弹道",
                                                 ),
                                             ],
                                             "layout": go.Layout(
@@ -161,7 +161,7 @@ def create_layout(app):
                                 [
                                     html.H6(
                                         [
-                                            "Average annual returns--updated monthly as of 02/28/2018"
+                                            "弹道关键统计量分析"
                                         ],
                                         className="subtitle padded",
                                     ),
@@ -187,7 +187,7 @@ def create_layout(app):
                                 [
                                     html.H6(
                                         [
-                                            "After-tax returns--updated quarterly as of 12/31/2017"
+                                            "数据处理前预分析--本分析每季度更新一次，时间：12/31/2017"
                                         ],
                                         className="subtitle padded",
                                     ),
@@ -212,7 +212,7 @@ def create_layout(app):
                             html.Div(
                                 [
                                     html.H6(
-                                        ["Recent investment returns"],
+                                        ["近期试验统计量"],
                                         className="subtitle padded",
                                     ),
                                     html.Table(

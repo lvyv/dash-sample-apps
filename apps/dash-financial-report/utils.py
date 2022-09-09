@@ -1,5 +1,13 @@
-import dash_html_components as html
-import dash_core_components as dcc
+from dash import html
+from dash import dcc
+import plotly.graph_objects as go
+import pandas as pd
+import plotly.express as px
+import plotly.io as pio
+import os
+
+REDTROOP = '红方'
+BLUETROOP = '蓝方'
 
 
 def Header(app):
@@ -9,40 +17,17 @@ def Header(app):
 def get_header(app):
     header = html.Div(
         [
-            html.Div(
-                [
-                    html.A(
-                        html.Img(
-                            src=app.get_asset_url("dash-financial-logo.png"),
-                            className="logo",
-                        ),
-                        href="https://plotly.com/dash",
-                    ),
-                    html.A(
-                        html.Button(
-                            "Enterprise Demo",
-                            id="learn-more-button",
-                            style={"margin-left": "-10px"},
-                        ),
-                        href="https://plotly.com/get-demo/",
-                    ),
-                    html.A(
-                        html.Button("Source Code", id="learn-more-button"),
-                        href="https://github.com/plotly/dash-sample-apps/tree/main/apps/dash-financial-report",
-                    ),
-                ],
-                className="row",
-            ),
+
             html.Div(
                 [
                     html.Div(
-                        [html.H5("Calibre Financial Index Fund Investor Shares")],
+                        [html.H5("试验训练基地复盘与分析评估")],
                         className="seven columns main-title",
                     ),
                     html.Div(
                         [
                             dcc.Link(
-                                "Full View",
+                                "全文视图",
                                 href="/dash-financial-report/full-view",
                                 className="full-view-link",
                             )
@@ -63,30 +48,30 @@ def get_menu():
     menu = html.Div(
         [
             dcc.Link(
-                "Overview",
+                "试验总结",
                 href="/dash-financial-report/overview",
                 className="tab first",
             ),
             dcc.Link(
-                "Price Performance",
+                "飞行",
                 href="/dash-financial-report/price-performance",
                 className="tab",
             ),
             dcc.Link(
-                "Portfolio & Management",
+                "测控",
                 href="/dash-financial-report/portfolio-management",
                 className="tab",
             ),
             dcc.Link(
-                "Fees & Minimums", href="/dash-financial-report/fees", className="tab"
+                "抗干扰", href="/dash-financial-report/fees", className="tab"
             ),
             dcc.Link(
-                "Distributions",
+                "综合通信",
                 href="/dash-financial-report/distributions",
                 className="tab",
             ),
             dcc.Link(
-                "News & Reviews",
+                "分析评估",
                 href="/dash-financial-report/news-and-reviews",
                 className="tab",
             ),
@@ -105,3 +90,259 @@ def make_dash_table(df):
             html_row.append(html.Td([row[i]]))
         table.append(html.Tr(html_row))
     return table
+
+
+# Create initial placeholder figure for radar plot
+def initial_figure_radar():
+    fig = go.Figure()
+    r_values = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+    fig.add_trace(
+        go.Scatterpolar(
+            r=r_values,
+            theta=[
+                "弹道",
+                "测控",
+                "通信",
+                "指控",
+                "安全",
+                "抗干扰",
+                "指标A",
+                "指标B",
+                "指标C",
+                "指标D",
+            ],
+            fill="toself",
+            opacity=0.50,
+        )
+    )
+
+    fig.update_layout(
+        # template="plotly_dark",
+        plot_bgcolor="rgba(0, 0, 0, 0)",
+        paper_bgcolor="rgba(0, 0, 0, 0)",
+    )
+
+    fig.update_layout(modebar=dict(bgcolor="rgba(0, 0, 0, 0)"))
+
+    fig.update_layout(
+        polar=dict(
+            bgcolor="#282828",
+            radialaxis=dict(visible=True, range=[0, 1], showticklabels=False, ),
+        ),
+        showlegend=False,
+    )
+    fig.update_layout(height=320)
+    fig.update_layout(margin=dict(l=60, r=60, b=30, t=45))
+    return fig
+
+
+# 'Normalize' values (not in a traditional sense, but in terms of percentages during the match)
+def normalize_events(df):
+    # Rename and trim down the df to columns we want
+    df = df.set_index("Team")
+    df = df[
+        [
+            "SET PIECE",
+            "PASS",
+            "BALL LOST",
+            "RECOVERY",
+            "CHALLENGE",
+            "SHOT",
+            "INTERCEPTION",
+            "CROSS",
+            "DEEP BALL",
+            "FREE KICK",
+        ]
+    ]
+    df.columns = [
+        "弹道",
+        "测控",
+        "通信",
+        "指控",
+        "安全",
+        "抗干扰",
+        "指标A",
+        "指标B",
+        "指标C",
+        "指标D",
+    ]
+
+    # 'Normalize' values from different scales by scaling them as a percentage of max. Use try/except to
+    # avoid division by zero
+    try:
+        df_normalized = df / (df.max() + df.min())
+    except:
+        df_normalized = (df + 0.1) / (df.max() + df.min())
+
+    # Replace nan's with zeros
+    standard_df_normalized = df_normalized.fillna(0)
+    return df_normalized
+
+
+# Main function
+def team_radar_builder(filename, team_id):
+    # Read in the events data file
+    data_file = "data/" + filename
+    events_df = pd.read_csv(data_file, encoding='utf8')
+    events_df = events_df[["Team", "Type", "Subtype"]]
+
+    # Count up the events for each team and create a new pivoted dataframe to hold the results
+    type_counted_df = (
+        events_df.groupby(["Team", "Type"]).size().to_frame("count").reset_index()
+    )
+    subtype_counted_df = (
+        events_df.groupby(["Team", "Subtype"]).size().to_frame("count").reset_index()
+    )
+    df1_pivoted = pd.pivot_table(
+        type_counted_df, values="count", index="Team", columns=["Type"], aggfunc=sum
+    ).reset_index()
+    df2_pivoted = pd.pivot_table(
+        subtype_counted_df,
+        values="count",
+        index="Team",
+        columns=["Subtype"],
+        aggfunc=sum,
+    ).reset_index()
+    df_pivoted = pd.merge(df1_pivoted, df2_pivoted, on="Team")
+    df_pivoted = df_pivoted.fillna(0)
+    normalized_df = normalize_events(df_pivoted)
+
+    theta_values = list(normalized_df.columns)
+
+    # Create initial figure
+    fig = go.Figure()
+    colormap = {REDTROOP: "red", BLUETROOP: "blue"}
+    normalized_df["Team"] = normalized_df.index
+    team_row_normalized = normalized_df.loc[normalized_df["Team"] == team_id]
+    team_row_normalized.drop("Team", axis=1, inplace=True)
+    team_row = team_row_normalized.reset_index(drop=True)
+    r_values = team_row.iloc[0].values.flatten().tolist()
+
+    # Providing a way to use normalized values for the graph but actual values for hover
+    team_row_value = df_pivoted.loc[df_pivoted["Team"] == team_id]
+    team_row_value.drop("Team", axis=1, inplace=True)
+    team_row_value = team_row_value[
+        [
+            "SET PIECE",
+            "PASS",
+            "BALL LOST",
+            "RECOVERY",
+            "CHALLENGE",
+            "SHOT",
+            "INTERCEPTION",
+            "CROSS",
+            "DEEP BALL",
+            "FREE KICK",
+        ]
+    ]
+    team_row_value = team_row_value.reset_index(drop=True)
+    pki_values = team_row_value.iloc[0].values.flatten().tolist()
+
+    fig.add_trace(
+        go.Scatterpolar(
+            r=r_values,
+            theta=theta_values,
+            fill="toself",
+            name=team_id,
+            opacity=0.25,
+            fillcolor=colormap[team_id],
+            hovertext=pki_values,
+            hovertemplate="%{theta}:" + " %{hovertext}<br>",
+        )
+    )
+
+    # Making some small markers that users can hover over to get more info (else they might not know where to hover)
+    fig.update_traces(
+        mode="lines+markers",
+        line_color=colormap[team_id],
+        marker=dict(color="white", symbol="circle", size=4),
+    )
+
+    fig.update_layout(
+        # title="演训KPI指标",
+        polar=dict(
+            bgcolor="#2A2A2A",
+            radialaxis=dict(visible=True, range=[0, 1], showticklabels=False, ),
+        ),
+        showlegend=False,
+        autosize=False,
+    )
+
+    fig.update_layout(
+        # template="plotly_dark",
+        plot_bgcolor="rgba(0, 0, 0, 0)",
+        paper_bgcolor="rgba(0, 0, 0, 0)",
+    )
+
+    fig.update_layout(modebar=dict(bgcolor="rgba(0, 0, 0, 0)"))
+    fig.update_layout(margin=dict(l=55, r=55, b=30, t=45))
+
+    return fig
+
+
+# Create initial placeholder figure for game simulator
+def initial_figure_simulator():
+    # fig = px.scatter(x=[0, 0, 105, 105], y=[69, -2, 69, -2])
+    fig = px.scatter(x=[0, 0, 1, 1], y=[0, 1, 0, 1])
+    fig.update_layout(xaxis=dict(range=[0, 1]))
+    fig.update_layout(yaxis=dict(range=[0, 1]))
+    fig.update_traces(marker=dict(color="white", size=6))
+
+    # Remove side color scale and hide zero and gridlines
+    fig.update_layout(
+        coloraxis_showscale=False,
+        xaxis=dict(showgrid=False, zeroline=False),
+        yaxis=dict(showgrid=False, zeroline=False),
+        autosize=True
+        # width=900,
+        # height=600
+    )
+
+    # Disable axis ticks and labels
+    fig.update_xaxes(showticklabels=False)
+    fig.update_yaxes(showticklabels=False)
+    fig.update_xaxes(title_text="")
+    fig.update_yaxes(title_text="")
+    fig.update_layout(margin=dict(l=80, r=80, b=10, t=20))
+    fig.update_layout(modebar=dict(bgcolor="rgba(0, 0, 0, 0)"))
+    image_file = "assets/Pitch.png"
+    image_path = os.path.join(os.getcwd(), image_file)
+
+    # Import and use pre-fabricated football pitch image
+    from PIL import Image
+
+    img = Image.open(image_path)
+
+    fig.add_layout_image(
+        dict(
+            source=img,
+            xref="x",
+            yref="y",
+            x=0,
+            y=1,
+            sizex=1,
+            sizey=1,
+            sizing="stretch",
+            opacity=0.7,
+            layer="below",
+        )
+    )
+
+    fig.update_yaxes(scaleanchor="x", scaleratio=0.70)
+
+    fig.update_layout(autosize=True)
+
+    fig.update_layout(
+        template="plotly_dark",
+        xaxis=dict(showgrid=False, showticklabels=False),
+        plot_bgcolor="rgba(0, 0, 0, 0)",
+        paper_bgcolor="rgba(0, 0, 0, 0)",
+    )
+    return fig
+
+
+def fig_from_json(filename):
+    with open(filename, 'r',  encoding='utf-8') as f:
+        fig = pio.from_json(f.read())
+    return fig
