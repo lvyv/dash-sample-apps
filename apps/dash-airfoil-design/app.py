@@ -229,7 +229,8 @@ last_analyze_timestamp = None
 
 n_clicks_last = 0
 
-### The callback to draw the airfoil on the graph
+
+# The callback to draw the airfoil on the graph
 @app.callback(
     Output("display", "figure"),
     Output("text_output", "children"),
