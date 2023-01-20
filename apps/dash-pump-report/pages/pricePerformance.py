@@ -153,7 +153,7 @@ def create_layout(app):
                                         },
                                         config={
                                             "displayModeBar": False,
-                                            "locale": "de-CH"
+                                            "locales": "de-CH"
                                         },
                                     ),
                                 ],

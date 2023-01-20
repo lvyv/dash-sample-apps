@@ -66,28 +66,28 @@ def get_menu():
                 className="tab first",
             ),
             dcc.Link(
-                "综合分析",
+                "BEP指标分析",
                 href="/dash-pump-report/price-performance",
                 className="tab",
             ),
-            # dcc.Link(
-            #     "附件1",
-            #     href="/dash-pump-report/portfolio-management",
-            #     className="tab",
-            # ),
-            # dcc.Link(
-            #     "附件2", href="/dash-pump-report/fees", className="tab"
-            # ),
-            # dcc.Link(
-            #     "附件3",
-            #     href="/dash-pump-report/distributions",
-            #     className="tab",
-            # ),
-            # dcc.Link(
-            #     "附件4",
-            #     href="/dash-pump-report/news-and-reviews",
-            #     className="tab",
-            # ),
+            dcc.Link(
+                "振动指标分析",
+                href="/dash-pump-report/portfolio-management",
+                className="tab",
+            ),
+            dcc.Link(
+                "工况指标分析", href="/dash-pump-report/fees", className="tab"
+            ),
+            dcc.Link(
+                "在役养护指标分析",
+                href="/dash-pump-report/distributions",
+                className="tab",
+            ),
+            dcc.Link(
+                "其它指标分析",
+                href="/dash-pump-report/news-and-reviews",
+                className="tab",
+            ),
         ],
         className="row all-tabs",
     )
